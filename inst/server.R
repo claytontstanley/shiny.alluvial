@@ -1,4 +1,5 @@
 library(shiny)
+library(data.table)
 
 shinyServer(function(input, output, session) {
 		    `%||%` <- function(x, y){

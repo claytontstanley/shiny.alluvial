@@ -12,7 +12,7 @@ library(devtools)
 runAppSK <- function(zTbl, ...) {
 	PATH = system.file(package="shiny.alluvial")
 	.sessionTbl <<- copy(zTbl)
-	addResourcePath('shiny_alluvial', .PATH) 
+	addResourcePath('shiny_alluvial', PATH) 
 	shiny::runApp(PATH, host="0.0.0.0", port=3343, ...)
 }
 
@@ -20,7 +20,7 @@ newRChart <- function(...) {
 	PATH = system.file(package="shiny.alluvial")
 	newPlot = rCharts$new(...)
 	newPlot$setLib(PATH)
-	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html"))
+	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html", PATH))
 	newPlot
 }
 
@@ -155,7 +155,6 @@ getSankeyTblTimeAnchorBoth <- function(xTbl, anchor, ...) {
 
 addSessionStart <- function(zTbl, labelGroup) {
 	bTbl = copy(zTbl)
-	assert_that(bTbl[, isRowSorted(as.matrix(.SD[, .(sID, nS)]))] == T)
 	bTbl[, nS := nS + 1]
 	bTbl[, NS := NS + 1]
 	bTbl[, .SD
@@ -171,7 +170,6 @@ addSessionStart <- function(zTbl, labelGroup) {
 }
 
 addSessionEnd <- function(bTbl, endLabel='') {  
-	assert_that(bTbl[, isRowSorted(as.matrix(.SD[, .(sID, nS)]))] == T) 
 	bTbl[, .(nS=1:(.N+1), NS=.N), sID 
 	     ][, bTbl[.SD, on=c('sID', 'nS', 'NS')] 
 	     ][order(sID, nS) 
@@ -184,27 +182,13 @@ addSessionEnd <- function(bTbl, endLabel='') {
 	     ] 
 } 
 
-# http://stackoverflow.com/questions/7599146/testing-if-rows-of-a-matrix-or-data-frame-are-sorted-in-r
-isRowSorted <- cxxfunction(signature(A="numeric"), body='
-			   Rcpp::NumericMatrix Am(A);
-			   for(int i = 1; i < Am.nrow(); i++) {
-				   for(int j = 0; j < Am.ncol(); j++) {
-					   if( Am(i-1,j) < Am(i,j) ) { break; }
-					   if( Am(i-1,j) > Am(i,j) ) { return(wrap(false)); }
-				   }
-			   }
-			   return(wrap(true));
-			   ', plugin="Rcpp")
-
 updateDtPrev <- function(fTbl) {
-	assert_that(fTbl[, isRowSorted(as.matrix(.SD[, .(sID, nS)]))] == T)
 	fTbl[, dtPrev := iDateTime - c(iDateTime[1], head(iDateTime, -1))]
 	fTbl[nS == 1, dtPrev := NA]
 	fTbl
 }
 
 updateDtNext <- function(fTbl) {
-	fTbl[, assert_that(isRowSorted(as.matrix(.SD[, .(sID, nS)])) == T)]
 	fTbl[, dtNext := c(tail(iDateTime, -1), tail(iDateTime, 1)) - iDateTime]
 	fTbl[nS == NS, dtNext := NA]
 	fTbl
