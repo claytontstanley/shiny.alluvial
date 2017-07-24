@@ -7,6 +7,7 @@ library(inline)
 library(stringr)
 library(stringi)
 library(rCharts)
+library(devtools)
 
 getFullPathToThisFile <- function() {
 	frameFiles = lapply(sys.frames(), function(x) x$ofile)
@@ -422,4 +423,7 @@ makeUniqueTS <- function(resTbl) {
 
 insertNB <- function(n) paste(rep(' ', n), collapse='', sep='')
 
+currentWS <- function() {
+	devtools::create("shiny.alluvial")
 
+}
