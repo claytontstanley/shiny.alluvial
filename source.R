@@ -22,11 +22,11 @@ getNameOfThisFile = function() {
 	basename(getFullPathToThisFile())
 }
 
-PATH = getPathToThisFile()
+.PATH = getPathToThisFile()
 
 runAppSK <- function(zTbl, ...) {
 	.sessionTbl <<- copy(zTbl)
-	addResourcePath('shiny_alluvial', PATH) 
+	addResourcePath('shiny_alluvial', .PATH) 
 	shiny::runApp('~/src/shiny_alluvial', host="0.0.0.0", port=3343, ...)
 }
 
