@@ -9,32 +9,18 @@ library(stringi)
 library(rCharts)
 library(devtools)
 
-getFullPathToThisFile <- function() {
-	frameFiles = lapply(sys.frames(), function(x) x$ofile)
-	frameFiles = Filter(Negate(is.null), frameFiles)
-	normalizePath(frameFiles[[length(frameFiles)]])
-}
-
-getPathToThisFile = function() {
-	dirname(getFullPathToThisFile())
-}
-
-getNameOfThisFile = function() {
-	basename(getFullPathToThisFile())
-}
-
-.PATH = getPathToThisFile()
-
 runAppSK <- function(zTbl, ...) {
+	PATH = system.file(package="shiny.alluvial")
 	.sessionTbl <<- copy(zTbl)
 	addResourcePath('shiny_alluvial', .PATH) 
-	shiny::runApp('~/src/shiny_alluvial', host="0.0.0.0", port=3343, ...)
+	shiny::runApp(PATH, host="0.0.0.0", port=3343, ...)
 }
 
 newRChart <- function(...) {
+	PATH = system.file(package="shiny.alluvial")
 	newPlot = rCharts$new(...)
-	newPlot$setLib('~/src/shiny_alluvial')
-	newPlot$setTemplate(script = "~/src/shiny_alluvial/layouts/chart.html")
+	newPlot$setLib(PATH)
+	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html"))
 	newPlot
 }
 
@@ -423,7 +409,3 @@ makeUniqueTS <- function(resTbl) {
 
 insertNB <- function(n) paste(rep(' ', n), collapse='', sep='')
 
-currentWS <- function() {
-	devtools::create("shiny.alluvial")
-
-}
