@@ -1,6 +1,7 @@
 library(devtools)
 library(data.table)
-
+library(knitr)
+library(markdown)
 
 
 sessionTbl = data.table(rID=1:100000)
@@ -17,11 +18,14 @@ sessionTbl[, rID := NULL]
 sessionTbl[, label := sample(c('a', 'b', 'c', 'd', 'e', 'f', 'g'), NS, replace=T), sID]
 sessionTbl
 
+devtools::use_data(sessionTbl, overwrite=T)
+
 devtools::load_all()
 
 runAppSK(sessionTbl)
 
-devtools::use_data(sessionTbl, overwrite=T)
-
-
 devtools::document()
+
+devtools::use_readme_rmd()
+
+knit('README.Rmd')
