@@ -1,8 +1,20 @@
 Package: shiny.alluvial
-Title: What the Package Does (one line, title case)
+Title: Creates an Interactive Alluvial Diagram from Timestamped, Sessionized Data, To Explore Workflows
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Clayton", "Stanley", email = "cstanley25@bloomberg.net", role = c("aut", "cre"))
+Description: This is a visualization tool to better understand workflows based on timestamped, labeled data.
+	Most of the initial .js and .html was from the rCharts_d3_sankey package.
+	However that package uses a problematic sankey visualization where the history of the session is not maintained.
+	This causes paths in that diagram to cross, which is confusing. 
+	With this visualization history is kept so the charts look more like funnels from a specific starting point, with no edge crossing.
+
+	The chart is interactive. Clicking on a node re-anchors the visualization to show all workflows that occur after that initial start point.
+	RShiny is used to create the interactivity.
+
+	This visualization likely has many uses for various sessionized data. We've used it to visualize user journeys based on log data.
+
+	The API consists of a single function, runAppSK. Calling this function with a properly-formatted data table will launch a browser that shows the viz.
+
 Depends: R (>= 3.2.3)
 License: What license is it under?
 Encoding: UTF-8
