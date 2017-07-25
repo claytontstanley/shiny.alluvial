@@ -24,6 +24,7 @@ sessionTbl
 
 library(shiny.alluvial)
 runAppSK(sessionTbl)
+devtools::install_local("~/src/shiny.alluvial")
 devtools::use_package("inline")
 devtools::use_package("magrittr")
 

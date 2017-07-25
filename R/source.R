@@ -8,6 +8,8 @@ library(stringi)
 library(rCharts)
 library(magrittr)
 
+.SAPATH = system.file(package="shiny.alluvial")
+
 #' @import data.table shiny testthat assertthat inline stringr stringi rCharts magrittr
 NULL
 
@@ -26,17 +28,15 @@ NULL
 #'
 #' @export
 runAppSK <- function(zTbl, ...) {
-	PATH = system.file(package="shiny.alluvial")
 	.sessionTbl <<- copy(zTbl)
-	addResourcePath('shiny_alluvial', PATH) 
-	shiny::runApp(PATH, host="0.0.0.0", port=3343, ...)
+	addResourcePath('shiny_alluvial', .SAPATH) 
+	shiny::runApp(.SAPATH, host="0.0.0.0", port=3343, ...)
 }
 
 newRChart <- function(...) {
-	PATH = system.file(package="shiny.alluvial")
 	newPlot = rCharts$new(...)
-	newPlot$setLib(PATH)
-	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html", PATH))
+	newPlot$setLib(.SAPATH)
+	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html", .SAPATH))
 	newPlot
 }
 
