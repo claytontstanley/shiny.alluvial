@@ -2,19 +2,26 @@ library(devtools)
 library(data.table)
 
 
+
+sessionTbl = data.table(rID=1:100000)
+sessionTbl
+sessionTbl[, iDateTime := as.POSIXct('2017-01-01T00:00:01', format="%Y-%m-%dT%H:%M:%OS", tz='GMT')]
+sessionTbl[, iDateTime := iDateTime + rID]
+dtTbl = sessionTbl[, IDateTime(iDateTime)]
+sessionTbl[, c('idate', 'itime') := dtTbl]
+sessionTbl[, sID := ceiling(rID / 3)]
+sessionTbl[, nS := 1:.N, sID]
+sessionTbl[, NS := .N, sID]
+sessionTbl[, uuid := sID + 30]
+sessionTbl[, rID := NULL]
+sessionTbl[, label := sample(c('a', 'b', 'c', 'd', 'e', 'f', 'g'), NS, replace=T), sID]
+sessionTbl
+
+devtools::load_all()
+
+runAppSK(sessionTbl)
+
+devtools::use_data(sessionTbl, overwrite=T)
+
+
 devtools::document()
-
-zTbl = data.table(rID=1:10000)
-zTbl
-zTbl[, iDateTime := as.POSIXct('2017-01-01T00:00:01', format="%Y-%m-%dT%H:%M:%OS", tz='GMT')]
-dtTbl = zTbl[, IDateTime(iDateTime)]
-zTbl[, c('idate', 'itime') := dtTbl]
-zTbl[, sID := ceiling(rID / 3)]
-zTbl[, nS := 1:.N, sID]
-zTbl[, NS := .N, sID]
-zTbl[, uuid := sID + 30]
-zTbl[, rID := NULL]
-zTbl[, label := sample(c('a', 'b', 'c'), NS, replace=T), sID]
-
-
-

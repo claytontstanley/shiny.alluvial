@@ -21,6 +21,7 @@ NULL
 #' @return None
 #'
 #' @examples
+#' runAppSK(sessionTbl)
 #'
 #' @export
 runAppSK <- function(zTbl, ...) {

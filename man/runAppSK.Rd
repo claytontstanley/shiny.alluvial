@@ -18,5 +18,6 @@ None
 Launch a webpage that shows the alluvial visualization
 }
 \examples{
+runAppSK(sessionTbl)
 
 }
