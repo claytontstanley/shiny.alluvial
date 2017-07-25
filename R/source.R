@@ -10,6 +10,9 @@ library(rCharts)
 #' @import data.table 
 NULL
 
+#' @exportPattern ^[^\.]
+NULL
+
 #' Launch a webpage that shows the alluvial visualization 
 #'
 #' @param zTbl timestamped, sessionized table in proper format
