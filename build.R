@@ -3,9 +3,12 @@ library(data.table)
 library(knitr)
 library(markdown)
 
+setNumericRounding(1)
+options(digits.secs = 3)
+
 sessionTbl = data.table(rID=1:100000)
 sessionTbl[, rID := 1:.N]
-sessionTbl[, iDateTime := as.POSIXct('2017-01-01T00:00:01', format="%Y-%m-%dT%H:%M:%OS", tz='GMT')]
+sessionTbl[, iDateTime := as.POSIXct('2017-01-01T00:00:01.123', format="%Y-%m-%dT%H:%M:%OS", tz='GMT')]
 sessionTbl[, iDateTime := iDateTime + rID ^ (1.1)]
 sessionTbl
 dtTbl = sessionTbl[, IDateTime(iDateTime)]
@@ -27,6 +30,7 @@ devtools::use_package("magrittr")
 devtools::use_data(sessionTbl, overwrite=T)
 
 devtools::load_all()
+sessionTbl
 
 runAppSK(sessionTbl)
 
