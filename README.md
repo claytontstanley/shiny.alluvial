@@ -9,7 +9,7 @@ output: github_document
 # shiny.alluvial
 
 Visualizes workflows from sessionized, timestamped data using an alluvial diagram.
-The resulting web page is interactive. Clicking on a node re-anchors the vis to show workflows outward from that start point.
+The resulting web page is interactive. Clicking on a node re-anchors the vis to show workflows outward from events with that node label.
 
 <img src="./figures/sample.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="100%" />
 
