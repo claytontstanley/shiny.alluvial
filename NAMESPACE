@@ -2,4 +2,12 @@
 
 export(runAppSK)
 exportPattern("^[^\\.]")
+import(assertthat)
 import(data.table)
+import(inline)
+import(magrittr)
+import(rCharts)
+import(shiny)
+import(stringi)
+import(stringr)
+import(testthat)

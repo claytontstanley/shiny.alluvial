@@ -15,8 +15,11 @@ sessionTbl[, nS := 1:.N, sID]
 sessionTbl[, NS := .N, sID]
 sessionTbl[, uuid := sID + 30]
 sessionTbl[, rID := NULL]
-sessionTbl[, label := sample(c('a', 'b', 'c', 'd', 'e', 'f', 'g'), NS, replace=T), sID]
+sessionTbl[, label := sample(c('a', 'b', 'c', 'd', 'e', 'f', 'g'), NS, replace=T, prob=1:7), sID]
 sessionTbl
+
+devtools::use_package("inline")
+devtools::use_package("magrittr")
 
 devtools::use_data(sessionTbl, overwrite=T)
 

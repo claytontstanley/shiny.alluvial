@@ -6,8 +6,9 @@ library(inline)
 library(stringr)
 library(stringi)
 library(rCharts)
+library(magrittr)
 
-#' @import data.table 
+#' @import data.table shiny testthat assertthat inline stringr stringi rCharts magrittr
 NULL
 
 #' @exportPattern ^[^\.]

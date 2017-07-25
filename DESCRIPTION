@@ -22,5 +22,7 @@ Imports: data.table,
     stringr,
     stringi,
     rCharts,
-    devtools
+    devtools,
+    inline,
+    magrittr
 RoxygenNote: 6.0.1
