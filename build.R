@@ -3,7 +3,6 @@ library(data.table)
 library(knitr)
 library(markdown)
 
-
 sessionTbl = data.table(rID=1:100000)
 sessionTbl
 sessionTbl[, iDateTime := as.POSIXct('2017-01-01T00:00:01', format="%Y-%m-%dT%H:%M:%OS", tz='GMT')]
