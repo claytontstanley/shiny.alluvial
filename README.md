@@ -8,7 +8,8 @@ output: github_document
 
 # shiny.alluvial
 
-The goal of shiny.alluvial is to ...
+Visualizes workflows from sessionized, timestamped data using an alluvial diagram.
+The resulting web page is interactive. Clicking on a node re-anchors the vis to show workflows outward from that start point.
 
 ## Installation
 
@@ -22,9 +23,12 @@ devtools::install_github("cstanley25/shiny_alluvial")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Visualize the workflows that are in the provided sessionTbl dataset:
 
 
 ```r
-## basic example code
+runAppSK(sessionTbl)
+#> 
+#> Listening on http://0.0.0.0:3343
+#> Error in startServer(host, port, handlerManager$createHttpuvApp()): Failed to create server
 ```
