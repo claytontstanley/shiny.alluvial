@@ -2,16 +2,23 @@ library(data.table)
 library(shiny)
 library(testthat)
 library(assertthat)
-library(Rcpp)
 library(inline)
 library(stringr)
 library(stringi)
 library(rCharts)
-library(devtools)
 
 #' @import data.table 
 NULL
 
+#' Launch a webpage that shows the alluvial visualization 
+#'
+#' @param zTbl timestamped, sessionized table in proper format
+#' @param ... Additional arguments passed to shiny::runApp
+#'
+#' @return None
+#'
+#' @examples
+#'
 #' @export
 runAppSK <- function(zTbl, ...) {
 	PATH = system.file(package="shiny.alluvial")
