@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 # shiny.alluvial
 
 Visualizes workflows from sessionized, timestamped data using an alluvial diagram.
-The resulting web page is interactive. Clicking on a node re-anchors the vis to show workflows outward from that start point.
+The resulting web page is interactive. Clicking on a node re-anchors the vis to show workflows outward from events with that node label.
 
 ```{r echo=F, out.width='100%'}
 knitr::include_graphics('./figures/sample.png')
