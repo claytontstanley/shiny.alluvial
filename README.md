@@ -24,11 +24,5 @@ devtools::install_github("cstanley25/shiny_alluvial")
 ## Example
 
 Visualize the workflows that are in the provided sessionTbl dataset:
-
-
-```r
 runAppSK(sessionTbl)
-#> 
-#> Listening on http://0.0.0.0:3343
-#> Error in startServer(host, port, handlerManager$createHttpuvApp()): Failed to create server
-```
+
