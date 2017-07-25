@@ -9,6 +9,10 @@ library(stringi)
 library(rCharts)
 library(devtools)
 
+#' @import data.table 
+NULL
+
+#' @export
 runAppSK <- function(zTbl, ...) {
 	PATH = system.file(package="shiny.alluvial")
 	.sessionTbl <<- copy(zTbl)
