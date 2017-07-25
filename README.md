@@ -24,5 +24,9 @@ devtools::install_github("cstanley25/shiny_alluvial")
 ## Example
 
 Visualize the workflows that are in the provided sessionTbl dataset:
+
+
+```r
 runAppSK(sessionTbl)
+```
 
