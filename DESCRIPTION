@@ -12,7 +12,7 @@ Description: This is a visualization tool to better understand workflows based o
 	This visualization likely has many uses for various sessionized data. We've used it to visualize user journeys based on log data.
 	The API consists of a single function, runAppSK. Calling this function with a properly-formatted data table will launch a browser that shows the viz.
 Depends: R (>= 3.2.3)
-License: What license is it under?
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: data.table,
