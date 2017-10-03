@@ -40,3 +40,5 @@ devtools::document()
 devtools::use_readme_rmd()
 
 knit('README.Rmd')
+
+devtools::use_gpl3_license()
