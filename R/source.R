@@ -7,6 +7,7 @@ library(stringr)
 library(stringi)
 library(rCharts)
 library(magrittr)
+library(R.utils)
 
 .SAPATH = system.file(package="shiny.alluvial")
 
@@ -28,6 +29,7 @@ NULL
 #'
 #' @export
 runAppSK <- function(zTbl, ...) {
+	reassignInPackage("runApp", "shiny", runAppMod)
 	.sessionTbl <<- copy(zTbl)
 	addResourcePath('shiny_alluvial', .SAPATH) 
 	shiny::runApp(.SAPATH, host="0.0.0.0", port=3343, ...)
@@ -408,4 +410,175 @@ makeUniqueTS <- function(resTbl) {
 }
 
 insertNB <- function(n) paste(rep(' ', n), collapse='', sep='')
+
+runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.browser = getOption("shiny.launch.browser", 
+    interactive()), host = getOption("shiny.host", "127.0.0.1"), 
+    workerId = "", quiet = FALSE, display.mode = c("auto", "normal", 
+        "showcase"), test.mode = getOption("shiny.testmode", 
+        FALSE), queryString="") 
+{
+    on.exit({
+        handlerManager$clear()
+    }, add = TRUE)
+    if (.globals$running) {
+        stop("Can't call `runApp()` from within `runApp()`. If your ", 
+            "application code contains `runApp()`, please remove it.")
+    }
+    .globals$running <- TRUE
+    on.exit({
+        .globals$running <- FALSE
+    }, add = TRUE)
+    oldOptionSet <- .globals$options
+    on.exit({
+        .globals$options <- oldOptionSet
+    }, add = TRUE)
+    ops <- options(warn = max(1, getOption("warn", default = 1)), 
+        pool.scheduler = scheduleTask)
+    on.exit(options(ops), add = TRUE)
+    appParts <- as.shiny.appobj(appDir)
+    appOps <- appParts$options
+    findVal <- function(arg, default) {
+        if (arg %in% names(appOps)) 
+            appOps[[arg]]
+        else default
+    }
+    if (missing(port)) 
+        port <- findVal("port", port)
+    if (missing(launch.browser)) 
+        launch.browser <- findVal("launch.browser", launch.browser)
+    if (missing(host)) 
+        host <- findVal("host", host)
+    if (missing(quiet)) 
+        quiet <- findVal("quiet", quiet)
+    if (missing(display.mode)) 
+        display.mode <- findVal("display.mode", display.mode)
+    if (missing(test.mode)) 
+        test.mode <- findVal("test.mode", test.mode)
+    if (is.null(host) || is.na(host)) 
+        host <- "0.0.0.0"
+    workerId(workerId)
+    if (inShinyServer()) {
+        ver <- Sys.getenv("SHINY_SERVER_VERSION")
+        if (utils::compareVersion(ver, .shinyServerMinVersion) < 
+            0) {
+            warning("Shiny Server v", .shinyServerMinVersion, 
+                " or later is required; please upgrade!")
+        }
+    }
+    setShowcaseDefault(0)
+    .globals$testMode <- test.mode
+    if (test.mode) {
+        message("Running application in test mode.")
+    }
+    if (is.character(appDir)) {
+        desc <- file.path.ci(if (tolower(tools::file_ext(appDir)) == 
+            "r") 
+            dirname(appDir)
+        else appDir, "DESCRIPTION")
+        if (file.exists(desc)) {
+            con <- file(desc, encoding = checkEncoding(desc))
+            on.exit(close(con), add = TRUE)
+            settings <- read.dcf(con)
+            if ("DisplayMode" %in% colnames(settings)) {
+                mode <- settings[1, "DisplayMode"]
+                if (mode == "Showcase") {
+                  setShowcaseDefault(1)
+                  if ("IncludeWWW" %in% colnames(settings)) {
+                    .globals$IncludeWWW <- as.logical(settings[1, 
+                      "IncludeWWW"])
+                    if (is.na(.globals$IncludeWWW)) {
+                      stop("In your Description file, `IncludeWWW` ", 
+                        "must be set to `True` (default) or `False`")
+                    }
+                  }
+                  else {
+                    .globals$IncludeWWW <- TRUE
+                  }
+                }
+            }
+        }
+    }
+    if (is.null(.globals$IncludeWWW) || is.na(.globals$IncludeWWW)) {
+        .globals$IncludeWWW <- TRUE
+    }
+    display.mode <- match.arg(display.mode)
+    if (display.mode == "normal") {
+        setShowcaseDefault(0)
+    }
+    else if (display.mode == "showcase") {
+        setShowcaseDefault(1)
+    }
+    require(shiny)
+    if (is.null(port)) {
+        for (i in 1:20) {
+            if (!is.null(.globals$lastPort)) {
+                port <- .globals$lastPort
+                .globals$lastPort <- NULL
+            }
+            else {
+                while (TRUE) {
+                  port <- p_randomInt(3000, 8000)
+                  if (!port %in% c(3659, 4045, 6000, 6665:6669)) {
+                    break
+                  }
+                }
+            }
+            tmp <- try(startServer(host, port, list()), silent = TRUE)
+            if (!inherits(tmp, "try-error")) {
+                stopServer(tmp)
+                .globals$lastPort <- port
+                break
+            }
+        }
+    }
+    on.exit({
+        .globals$onStopCallbacks$invoke()
+        .globals$onStopCallbacks <- Callbacks$new()
+    }, add = TRUE)
+    unconsumeAppOptions(appParts$appOptions)
+    if (!is.null(appParts$onStop)) 
+        on.exit(appParts$onStop(), add = TRUE)
+    if (!is.null(appParts$onStart)) 
+        appParts$onStart()
+    server <- startApp(appParts, port, host, quiet)
+    on.exit({
+        stopServer(server)
+    }, add = TRUE)
+    if (!is.character(port)) {
+        browseHost <- if (identical(host, "0.0.0.0")) 
+            "127.0.0.1"
+        else host
+        appUrl <- paste("http://", browseHost, ":", port, sep = "")
+	if (queryString != "") {
+		appUrl = sprintf("%s/?%s", appUrl, queryString)
+	}
+        if (is.function(launch.browser)) 
+            launch.browser(appUrl)
+        else if (launch.browser) 
+            utils::browseURL(appUrl)
+    }
+    else {
+        appUrl <- NULL
+    }
+    callAppHook("onAppStart", appUrl)
+    on.exit({
+        callAppHook("onAppStop", appUrl)
+    }, add = TRUE)
+    .globals$reterror <- NULL
+    .globals$retval <- NULL
+    .globals$stopped <- FALSE
+    ..stacktraceoff..(captureStackTraces({
+        scheduleFlush()
+        while (!.globals$stopped) {
+            serviceApp()
+            Sys.sleep(0.001)
+        }
+    }))
+    if (isTRUE(.globals$reterror)) {
+        stop(.globals$retval)
+    }
+    else if (.globals$retval$visible) 
+        .globals$retval$value
+    else invisible(.globals$retval$value)
+}
 
