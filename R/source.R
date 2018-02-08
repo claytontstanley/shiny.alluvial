@@ -8,6 +8,7 @@ library(stringi)
 library(rCharts)
 library(magrittr)
 library(R.utils)
+library(Rcpp)
 
 .SAPATH = system.file(package="shiny.alluvial")
 
@@ -410,6 +411,59 @@ makeUniqueTS <- function(resTbl) {
 }
 
 insertNB <- function(n) paste(rep(' ', n), collapse='', sep='')
+
+addSessionRolling <- function(fTbl, keyv, maxDt=15) {
+        setorderv(fTbl, keyv)
+        fTbl[, sIDOuter := .GRP, by=eval(head(keyv, -1))]
+        fTbl[, dtPrev := iDateTime - shift(iDateTime)]
+        fTbl[, dsIDPrev := sIDOuter - shift(sIDOuter)]
+        fTbl[!dsIDPrev %in% c(NA, 0, 1)][, assert_that(nrow(.SD) == 0)]
+        fTbl[, sID := cumsum(is.na(dtPrev) | dtPrev >= maxDt | dsIDPrev == 1)]
+        fTbl[, dsIDPrev := NULL]
+        fTbl[, sIDOuter := NULL]
+        fTbl[, NS := .N, sID]
+        fTbl[, nS := rowid(sID)]
+        updateDtPrev(fTbl)
+        fTbl
+}
+
+updateDtPrev <- function(fTbl) {
+        assert_that(fTbl[, isRowSorted(as.matrix(.SD[, .(sID, nS)]))] == T)
+        fTbl[, dtPrev := iDateTime - c(iDateTime[1], head(iDateTime, -1))]
+        fTbl[nS == 1, dtPrev := NA]
+        fTbl
+}
+
+updateDtNext <- function(fTbl) {
+        fTbl[, assert_that(isRowSorted(as.matrix(.SD[, .(sID, nS)])) == T)]
+        fTbl[, dtNext := c(tail(iDateTime, -1), tail(iDateTime, 1)) - iDateTime]
+        fTbl[nS == NS, dtNext := NA]
+        fTbl
+}
+
+# http://stackoverflow.com/questions/7599146/testing-if-rows-of-a-matrix-or-data-frame-are-sorted-in-r
+isRowSorted <- cxxfunction(signature(A="numeric"), body='
+                           Rcpp::NumericMatrix Am(A);
+                           for(int i = 1; i < Am.nrow(); i++) {
+                                   for(int j = 0; j < Am.ncol(); j++) {
+                                           if( Am(i-1,j) < Am(i,j) ) { break; }
+                                           if( Am(i-1,j) > Am(i,j) ) { return(wrap(false)); }
+                                   }
+                           }
+                           return(wrap(true));
+                           ', plugin="Rcpp")
+
+test_that("addSessionRolling", {
+        cTbl = data.table(uuid=c(1,1,2,2,3,3), iDateTime=as.Date(c(1,10,1,2,2,3), origin='1970-01-01'))
+        addSessionRolling(cTbl, c('uuid', 'iDateTime'), 1.5)[, assert_that(all(sID == c(1, 2, 3, 3, 4, 4)))]
+        cTbl = data.table(uuid=c(1,1,1,2,3,3), iDateTime=as.Date(c(1,10,1,2,2,3), origin='1970-01-01'))
+        addSessionRolling(cTbl, c('uuid', 'iDateTime'), 1.5)
+        cTbl[, assert_that(all(sID == c(1, 1, 2, 3, 4, 4)))]
+        cTbl[, assert_that(all(uuid == c(1,1,1,2,3,3)))]
+        cTbl[, assert_that(all(iDateTime == as.Date(c(1,1,10,2,2,3), origin='1970-01-01')))]
+        cTbl[, expect_identical(dtPrev, as.difftime(c(NA, 0, NA, NA, NA, 1), units='days'))]
+        cTbl
+})
 
 runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.browser = getOption("shiny.launch.browser", 
     interactive()), host = getOption("shiny.host", "127.0.0.1"), 
