@@ -428,30 +428,16 @@ addSessionRolling <- function(fTbl, keyv, maxDt=15) {
 }
 
 updateDtPrev <- function(fTbl) {
-        assert_that(fTbl[, isRowSorted(as.matrix(.SD[, .(sID, nS)]))] == T)
         fTbl[, dtPrev := iDateTime - c(iDateTime[1], head(iDateTime, -1))]
         fTbl[nS == 1, dtPrev := NA]
         fTbl
 }
 
 updateDtNext <- function(fTbl) {
-        fTbl[, assert_that(isRowSorted(as.matrix(.SD[, .(sID, nS)])) == T)]
         fTbl[, dtNext := c(tail(iDateTime, -1), tail(iDateTime, 1)) - iDateTime]
         fTbl[nS == NS, dtNext := NA]
         fTbl
 }
-
-# http://stackoverflow.com/questions/7599146/testing-if-rows-of-a-matrix-or-data-frame-are-sorted-in-r
-isRowSorted <- cxxfunction(signature(A="numeric"), body='
-                           Rcpp::NumericMatrix Am(A);
-                           for(int i = 1; i < Am.nrow(); i++) {
-                                   for(int j = 0; j < Am.ncol(); j++) {
-                                           if( Am(i-1,j) < Am(i,j) ) { break; }
-                                           if( Am(i-1,j) > Am(i,j) ) { return(wrap(false)); }
-                                   }
-                           }
-                           return(wrap(true));
-                           ', plugin="Rcpp")
 
 test_that("addSessionRolling", {
         cTbl = data.table(uuid=c(1,1,2,2,3,3), iDateTime=as.Date(c(1,10,1,2,2,3), origin='1970-01-01'))
