@@ -2,6 +2,8 @@
 
 export(runAppSK)
 exportPattern("^[^\\.]")
+import(R.utils)
+import(Rcpp)
 import(assertthat)
 import(data.table)
 import(inline)

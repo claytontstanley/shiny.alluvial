@@ -12,7 +12,7 @@ library(Rcpp)
 
 .SAPATH = system.file(package="shiny.alluvial")
 
-#' @import data.table shiny testthat assertthat inline stringr stringi rCharts magrittr
+#' @import data.table shiny testthat assertthat inline stringr stringi rCharts magrittr R.utils Rcpp
 NULL
 
 #' @exportPattern ^[^\.]
