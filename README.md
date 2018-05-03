@@ -32,3 +32,6 @@ Visualize the workflows that are in the provided sessionTbl dataset:
 runAppSK(sessionTbl)
 ```
 
+## Supported Browsers
+
+Only Firefox has been tested to work
