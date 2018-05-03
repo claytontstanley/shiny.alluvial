@@ -20,7 +20,7 @@ You can install shiny.alluvial from github with:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("claytonstanley/shiny.alluvial")
+devtools::install_github("claytontstanley/shiny.alluvial")
 ```
 
 ## Example
