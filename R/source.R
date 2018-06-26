@@ -558,7 +558,8 @@ runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.
             else {
                 while (TRUE) {
                   port <- p_randomInt(3000, 8000)
-                  if (!port %in% c(3659, 4045, 6000, 6665:6669)) {
+                  if (!port %in% c(3659, 4045, 6000, 6665:6669, 
+                    6697)) {
                     break
                   }
                 }
@@ -589,9 +590,9 @@ runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.
             "127.0.0.1"
         else host
         appUrl <- paste("http://", browseHost, ":", port, sep = "")
-	if (queryString != "") {
-		appUrl = sprintf("%s/?%s", appUrl, queryString)
-	}
+        if (queryString != "") {
+                appUrl = sprintf("%s/?%s", appUrl, queryString)
+        }
         if (is.function(launch.browser)) 
             launch.browser(appUrl)
         else if (launch.browser) 
@@ -608,9 +609,8 @@ runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.
     .globals$retval <- NULL
     .globals$stopped <- FALSE
     ..stacktraceoff..(captureStackTraces({
-        scheduleFlush()
         while (!.globals$stopped) {
-            serviceApp()
+            ..stacktracefloor..(serviceApp())
             Sys.sleep(0.001)
         }
     }))
@@ -621,4 +621,3 @@ runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.
         .globals$retval$value
     else invisible(.globals$retval$value)
 }
-
