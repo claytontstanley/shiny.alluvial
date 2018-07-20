@@ -17,12 +17,21 @@ shinyServer(function(input, output, session) {
 			    sampleBy = as.numeric(query$sampleBy %||% .sessionTbl$.sampleBy[1] %||% 1)
                             grepFor = query$grepFor %||% ""
                             grepNot = query$grepNot %||% ""
+                            grepForUpto = query$grepForUpto %||% ""
+                            grepNotUpto = query$grepNotUpte %||% ""
                             zTbl = .sessionTbl[uuid %% sampleBy == 0]
+
                             if (grepFor != "") {
-                                    zTbl = grepForSessions(zTbl, grepFor)
+                                    zTbl = grepForSessions(zTbl, grepFor, col='sLabel')
                             }
                             if (grepNot != "") {
-                                    zTbl = grepForSessions(zTbl, grepNot, invert=T)
+                                    zTbl = grepForSessions(zTbl, grepNot, invert=T, col='sLabel')
+                            }
+                            if (grepForUpto != "") {
+                                    zTbl = grepForSessions(zTbl, grepFor, col='sUptoLabel')
+                            }
+                            if (grepNotUpto != "") {
+                                    zTbl = grepForSessions(zTbl, grepNot, invert=T, col='sUptoLabel')
                             }
 			    print("Computing SK Chart")
 			    if (is.null(anchor)) {
