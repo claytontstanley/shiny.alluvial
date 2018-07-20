@@ -15,11 +15,20 @@ shinyServer(function(input, output, session) {
 			    groupField = query$groupField %||% .sessionTbl$.groupField[1] %||% ''
 			    normalizeGroupsP = as.logical(query$normalizeGroupsP %||% .sessionTbl$.normalizeGroupsP[1] %||% F)
 			    sampleBy = as.numeric(query$sampleBy %||% .sessionTbl$.sampleBy[1] %||% 1)
+                            grepFor = query$grepFor %||% ""
+                            grepNot = query$grepNot %||% ""
+                            zTbl = .sessionTbl[uuid %% sampleBy == 0]
+                            if (grepFor != "") {
+                                    zTbl = grepForSessions(zTbl, grepFor)
+                            }
+                            if (grepNot != "") {
+                                    zTbl = grepForSessions(zTbl, grepNot, invert=T)
+                            }
 			    print("Computing SK Chart")
 			    if (is.null(anchor)) {
-				    sankeyPlot = getSKChart(getSankeyTblTime(.sessionTbl[uuid %% sampleBy == 0], stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
+				    sankeyPlot = getSKChart(getSankeyTblTime(zTbl, stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
 			    } else {
-				    sankeyPlot = getSKChart(getSankeyTblTimeAnchor(.sessionTbl[uuid %% sampleBy == 0], anchor=anchor, direction=direction, stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
+				    sankeyPlot = getSKChart(getSankeyTblTimeAnchor(zTbl, anchor=anchor, direction=direction, stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
 			    }
 			    print("Sending Results")
 			    session$sendCustomMessage(type='testmessage', message=sankeyPlot$params)
