@@ -451,6 +451,42 @@ test_that("addSessionRolling", {
         cTbl
 })
 
+addSLabels <- function(zTbl) {
+        zTbl[grepl(',', label)][, assert_that(nrow(.SD) == 0)]
+        zTbl[, sLabel := paste0(sprintf(",%s", label), collapse=''), sID]
+        zTbl[, .zPatt := strrep(",[^,]+", nS)]
+        zTbl[, .zPatt := sprintf('^%s', .zPatt)]
+        zTbl[, .SD
+             ][, .N, .(sLabel, .zPatt)
+             ][, sUptoLabel := str_extract(sLabel, .zPatt)
+             ][, sUptoLabel := gsub('^,', '', sUptoLabel)
+             ][, zTbl[.SD, sUptoLabel := i.sUptoLabel, on=.(sLabel, .zPatt)]
+             ]
+        zTbl[, sLabel := gsub('^,', '', sLabel)]
+        zTbl[, .zPatt := NULL]
+        zTbl
+}
+
+ensureSLabels <- function(zTbl) {
+        if (! 'sUptoLabel' %in% colnames(zTbl)) {
+                addSLabels(zTbl)
+        }
+        zTbl
+}
+
+grepForSessions <- function(zTbl, patt, invert=F, col='sUptoLabel') {
+#        print(sprintf('grepping for: %s, %s, %s', patt, invert, col))
+        zTbl[, assert_that("sKey" %in% colnames(zTbl))]
+        key = fromJSON(zTbl[, sKey[1]])$key
+        maxDt = fromJSON(zTbl[, sKey[1]])$maxDt
+        zTbl[, .SD
+             ][grepl(patt, get(col)) != invert
+             ][, addSessionRolling(copy(.SD), key, maxDt=maxDt)
+             ][, {tempTbl <<- copy(.SD); .SD}
+             ][, .SD
+             ]
+}
+
 runAppMod <- function (appDir = getwd(), port = getOption("shiny.port"), launch.browser = getOption("shiny.launch.browser", 
     interactive()), host = getOption("shiny.host", "127.0.0.1"), 
     workerId = "", quiet = FALSE, display.mode = c("auto", "normal", 
