@@ -215,13 +215,14 @@ updateDtNext <- function(fTbl) {
 
 addCIDs <- function(skTbl, maxStep) {
 	skTbl[, cIDCur := 1]
-	for (step in 1:maxStep) {
+	for (step in 1:(min(c(maxStep, skTbl[, max(NS)])))) {
 		addCID(skTbl, step)
 	}
 	makeUniqueCID(skTbl)
 }
 
 addCID <- function(skTbl, step) {
+        #print(sprintf("addCID %s", step))
 	skTbl[, .SD
 	      ][nS <= step
 	      ][, dcast(.SD, cIDCur + sID ~ nS, value.var='label')
@@ -251,6 +252,7 @@ makeUniqueCID <- function(skTbl) {
 }
 
 getSkSumTbl <- function(skTbl) {
+        #print(sprintf("getSkSumTbl"))
 	steps = grep('^cID', colnames(skTbl), value=T) %>% setdiff(c('cIDCur', 'cID1')) %>% str_extract('[0-9]+$') %>% as.numeric
 	resTbl = rbindlist(lapply(as.list(steps), function(c) getTsAtStep(skTbl, c)), use.names=T, fill=T)
 	resTbl
@@ -260,6 +262,7 @@ getSkSumTbl <- function(skTbl) {
 }
 
 getTsAtStep <- function(skTbl, step) {
+        #print(sprintf("getTsAtStep", step))
 	byCols = c(sprintf('%s%s', 'cID', 1:step))
 	butlastByCols = head(byCols, -1)
 	lastByCol = tail(byCols, 1)
@@ -293,6 +296,7 @@ updateDrops <- function(resTbl) {
 }
 
 addCountRow <- function(zTbl, normalizeGroupsP) {       
+        #print(sprintf("addCountRow %s", normalizeGroupsP))
 	addCountRowGrp <- function(resTbl, labelGroup) {
 		cIDCols = grep('^cID', colnames(resTbl), value=T)
 		resTbl[, countRowTarget := 0]
@@ -362,6 +366,7 @@ relaxTimesToSteps <- function(tbl) {
 }
 
 updateSKValues <- function(resTbl, normalizeGroupsP) {
+        #print(sprintf("updateSKValues %s", normalizeGroupsP))
 	NSs = resTbl[step == 2, sum(count)]
 	resTbl[, value := count/NSs]
 	resTbl[, valueRowSource := countRowSource/NSs]
