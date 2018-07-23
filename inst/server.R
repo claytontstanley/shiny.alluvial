@@ -15,23 +15,26 @@ shinyServer(function(input, output, session) {
 			    groupField = query$groupField %||% .sessionTbl$.groupField[1] %||% ''
 			    normalizeGroupsP = as.logical(query$normalizeGroupsP %||% .sessionTbl$.normalizeGroupsP[1] %||% F)
 			    sampleBy = as.numeric(query$sampleBy %||% .sessionTbl$.sampleBy[1] %||% 1)
-                            grepFor = query$grepFor %||% ""
-                            grepNot = query$grepNot %||% ""
-                            grepForUpto = query$grepForUpto %||% ""
-                            grepNotUpto = query$grepNotUpte %||% ""
+                            grepFor = query[["grepFor"]] %||% ""
+                            grepOut = query[["grepOut"]] %||% ""
+                            grepForUpto = query[["grepForUpto"]] %||% ""
+                            grepOutUpto = query[["grepOutUpto"]] %||% ""
+                            grepArgs = c(grepFor, grepOut, grepForUpto, grepOutUpto)
+                            if (! all(grepArgs == "")) {
+                                    ensureSLabels(.sessionTbl)
+                            }
                             zTbl = .sessionTbl[uuid %% sampleBy == 0]
-
                             if (grepFor != "") {
                                     zTbl = grepForSessions(zTbl, grepFor, col='sLabel')
                             }
-                            if (grepNot != "") {
-                                    zTbl = grepForSessions(zTbl, grepNot, invert=T, col='sLabel')
+                            if (grepOut != "") {
+                                    zTbl = grepForSessions(zTbl, grepOut, invert=T, col='sLabel')
                             }
                             if (grepForUpto != "") {
-                                    zTbl = grepForSessions(zTbl, grepFor, col='sUptoLabel')
+                                    zTbl = grepForSessions(zTbl, grepForUpto, col='sUptoLabel')
                             }
-                            if (grepNotUpto != "") {
-                                    zTbl = grepForSessions(zTbl, grepNot, invert=T, col='sUptoLabel')
+                            if (grepOutUpto != "") {
+                                    zTbl = grepForSessions(zTbl, grepOutUpto, invert=T, col='sUptoLabel')
                             }
 			    print("Computing SK Chart")
 			    if (is.null(anchor)) {
