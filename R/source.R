@@ -5,14 +5,13 @@ library(assertthat)
 library(inline)
 library(stringr)
 library(stringi)
-library(rCharts)
 library(magrittr)
 library(R.utils)
 library(Rcpp)
 
 .SAPATH = system.file(package="shiny.alluvial")
 
-#' @import data.table shiny testthat assertthat inline stringr stringi rCharts magrittr R.utils Rcpp
+#' @import data.table shiny testthat assertthat inline stringr stringi magrittr R.utils Rcpp
 NULL
 
 #' @exportPattern ^[^\.]
@@ -34,13 +33,6 @@ runAppSK <- function(zTbl, ...) {
 	.sessionTbl <<- copy(zTbl)
 	addResourcePath('shiny_alluvial', .SAPATH) 
 	shiny::runApp(.SAPATH, host="0.0.0.0", port=3343, ...)
-}
-
-newRChart <- function(...) {
-	newPlot = rCharts$new(...)
-	newPlot$setLib(.SAPATH)
-	newPlot$setTemplate(script = sprintf("%s/layouts/chart.html", .SAPATH))
-	newPlot
 }
 
 getSKChart <- function(tbl, exactTimeP=F) {
@@ -71,14 +63,17 @@ getSKChart <- function(tbl, exactTimeP=F) {
 	swapVals('valueRowSource', 'valueRowTarget')
 
 	makeUniqueTS(resTbl)
-	sankeyPlot = newRChart()
-	sankeyPlot$set(data = resTbl,
-		       nodeWidth = 25,
-		       nodePadding = 30,
-		       layout = 32,
-		       width = 3840,
-		       height = 2160,
-		       labelFormat = ".1%")
+        sankeyPlot = list()
+        sankeyPlot$params = 
+                list(
+                     data = resTbl,
+                     nodeWidth = 25,
+                     nodePadding = 30,
+                     layout = 32,
+                     width = 3840,
+                     height = 2160,
+                     labelFormat = ".1%"
+                     )
 	sankeyPlot
 }
 
