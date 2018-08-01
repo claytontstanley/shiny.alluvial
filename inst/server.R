@@ -22,6 +22,7 @@ shinyServer(function(input, output, session) {
                             grepArgs = c(grepFor, grepOut, grepForUpto, grepOutUpto)
                             sKeyKey = query$sKeyKey %||% ""
                             sKeyMaxDt = query$sKeyMaxDt %||% "0"
+                            label = query$label %||% ""
                             
                             zTbl = copy(.sessionTbl)
                             zTbl = zTbl[uuid %% sampleBy == 0]
@@ -31,6 +32,13 @@ shinyServer(function(input, output, session) {
                                     maxDt = eval(parse(text=sKeyMaxDt))
                                     zTbl[, sKey := toJSON(list(key=key, maxDt=maxDt))]
                                     addSessionRolling(zTbl, key, maxDt)
+                                    zTbl[, sLabel := NULL]
+                                    zTbl[, sUptoLabel := NULL]
+                            }
+
+                            if (label != "") {
+                                    labelText = label
+                                    zTbl[, label := eval(parse(text=labelText))(copy(.SD))]
                                     zTbl[, sLabel := NULL]
                                     zTbl[, sUptoLabel := NULL]
                             }
