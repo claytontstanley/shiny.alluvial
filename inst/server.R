@@ -20,10 +20,24 @@ shinyServer(function(input, output, session) {
                             grepForUpto = query[["grepForUpto"]] %||% ""
                             grepOutUpto = query[["grepOutUpto"]] %||% ""
                             grepArgs = c(grepFor, grepOut, grepForUpto, grepOutUpto)
-                            if (! all(grepArgs == "")) {
-                                    ensureSLabels(.sessionTbl)
+                            sKeyKey = query$sKeyKey %||% ""
+                            sKeyMaxDt = query$sKeyMaxDt %||% "0"
+                            
+                            zTbl = copy(.sessionTbl)
+                            zTbl = zTbl[uuid %% sampleBy == 0]
+
+                            if (sKeyKey != "") {
+                                    key = eval(parse(text=sKeyKey))
+                                    maxDt = eval(parse(text=sKeyMaxDt))
+                                    zTbl[, sKey := toJSON(list(key=key, maxDt=maxDt))]
+                                    addSessionRolling(zTbl, key, maxDt)
+                                    zTbl[, sLabel := NULL]
+                                    zTbl[, sUptoLabel := NULL]
                             }
-                            zTbl = .sessionTbl[uuid %% sampleBy == 0]
+
+                            if (! all(grepArgs == "")) {
+                                    ensureSLabels(zTbl)
+                            }
                             if (grepFor != "") {
                                     zTbl = grepForSessions(zTbl, grepFor, col='sLabel')
                             }
@@ -36,12 +50,14 @@ shinyServer(function(input, output, session) {
                             if (grepOutUpto != "") {
                                     zTbl = grepForSessions(zTbl, grepOutUpto, invert=T, col='sUptoLabel')
                             }
+
 			    print("Computing SK Chart")
 			    if (is.null(anchor)) {
 				    sankeyPlot = getSKChart(getSankeyTblTime(zTbl, stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
 			    } else {
 				    sankeyPlot = getSKChart(getSankeyTblTimeAnchor(zTbl, anchor=anchor, direction=direction, stepMax=stepMax, groupField=groupField, normalizeGroupsP=normalizeGroupsP), exactTimeP=exactTimeP)
 			    }
+
 			    print("Sending Results")
 			    session$sendCustomMessage(type='testmessage', message=sankeyPlot$params)
 		    })
