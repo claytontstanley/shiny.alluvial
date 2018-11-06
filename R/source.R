@@ -28,11 +28,11 @@ NULL
 #' runAppSK(sessionTbl)
 #'
 #' @export
-runAppSK <- function(zTbl, ...) {
+runAppSK <- function(zTbl, port=3343, ...) {
 	reassignInPackage("runApp", "shiny", runAppMod)
 	.sessionTbl <<- copy(zTbl)
 	addResourcePath('shiny_alluvial', .SAPATH) 
-	shiny::runApp(.SAPATH, host="0.0.0.0", port=3343, ...)
+	shiny::runApp(.SAPATH, host="0.0.0.0", port=port, ...)
 }
 
 getSKChart <- function(tbl, exactTimeP=F) {
