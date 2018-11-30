@@ -451,19 +451,30 @@ test_that("addSessionRolling", {
         cTbl
 })
 
+cppFunction('CharacterVector accumpaste(CharacterVector x, NumericVector sid) {
+            int n = x.size();
+            CharacterVector s(n);
+            int sidC = -1;
+            String sUptoLabel = "";
+            for(int i = 0; i < n; ++i) {
+                    if (sid[i] != sidC) {
+                            sUptoLabel = "";
+                    }
+                    sidC = sid[i];
+                    if (sUptoLabel != "") {
+                            sUptoLabel += ",";
+                    }
+                    sUptoLabel += x[i];
+                    s[i] = sUptoLabel;
+            }
+            return s;
+}')
+
 addSLabels <- function(zTbl) {
+        zTbl
         zTbl[grepl(',', label)][, assert_that(nrow(.SD) == 0)]
-        zTbl[, sLabel := paste0(sprintf(",%s", label), collapse=''), sID]
-        zTbl[, .zPatt := strrep(",[^,]+", nS)]
-        zTbl[, .zPatt := sprintf('^%s', .zPatt)]
-        zTbl[, .SD
-             ][, .N, .(sLabel, .zPatt)
-             ][, sUptoLabel := str_extract(sLabel, .zPatt)
-             ][, sUptoLabel := gsub('^,', '', sUptoLabel)
-             ][, zTbl[.SD, sUptoLabel := i.sUptoLabel, on=.(sLabel, .zPatt)]
-             ]
-        zTbl[, sLabel := gsub('^,', '', sLabel)]
-        zTbl[, .zPatt := NULL]
+        zTbl[, sLabel := paste0(label, collapse=',', sep=''), sID]
+        zTbl[, sUptoLabel := accumpaste(label, sID)]
         zTbl
 }
 
