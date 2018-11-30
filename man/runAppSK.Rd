@@ -4,7 +4,7 @@
 \alias{runAppSK}
 \title{Launch a webpage that shows the alluvial visualization}
 \usage{
-runAppSK(zTbl, ...)
+runAppSK(zTbl, port = 3343, ...)
 }
 \arguments{
 \item{zTbl}{timestamped, sessionized table in proper format}

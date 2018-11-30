@@ -17,6 +17,12 @@ NULL
 #' @exportPattern ^[^\.]
 NULL
 
+#' @useDynLib shiny.alluvial, .registration = TRUE
+NULL
+
+#' @importFrom Rcpp evalCpp
+NULL
+
 #' Launch a webpage that shows the alluvial visualization 
 #'
 #' @param zTbl timestamped, sessionized table in proper format
@@ -450,25 +456,6 @@ test_that("addSessionRolling", {
         cTbl[, expect_identical(dtPrev, as.difftime(c(NA, 0, NA, NA, NA, 1), units='days'))]
         cTbl
 })
-
-cppFunction('CharacterVector accumpaste(CharacterVector x, NumericVector sid) {
-            int n = x.size();
-            CharacterVector s(n);
-            int sidC = -1;
-            String sUptoLabel = "";
-            for(int i = 0; i < n; ++i) {
-                    if (sid[i] != sidC) {
-                            sUptoLabel = "";
-                    }
-                    sidC = sid[i];
-                    if (sUptoLabel != "") {
-                            sUptoLabel += ",";
-                    }
-                    sUptoLabel += x[i];
-                    s[i] = sUptoLabel;
-            }
-            return s;
-}')
 
 addSLabels <- function(zTbl) {
         zTbl
