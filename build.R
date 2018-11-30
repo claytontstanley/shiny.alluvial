@@ -43,6 +43,4 @@ knit('README.Rmd')
 
 devtools::use_gpl3_license()
 
-devtools::use_rcpp()
-usethis::use_rcpp()
 Rcpp::compileAttributes()
