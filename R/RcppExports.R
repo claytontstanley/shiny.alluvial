@@ -3,10 +3,6 @@
 
 #' @export
 accumpaste <- function(x, sid) {
-    .Call('_shiny_alluvial_accumpaste', PACKAGE = 'shiny.alluvial', x, sid)
-}
-
-rcpp_hello_world <- function() {
-    .Call('_shiny_alluvial_rcpp_hello_world', PACKAGE = 'shiny.alluvial')
+    .Call(`_shiny_alluvial_accumpaste`, x, sid)
 }
 
