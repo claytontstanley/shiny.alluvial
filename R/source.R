@@ -418,7 +418,7 @@ makeUniqueTS <- function(resTbl) {
 
 insertNB <- function(n) paste(rep(' ', n), collapse='', sep='')
 
-addSessionRolling <- function(fTbl, keyv, maxDt=15) {
+addSessionRolling <- function(fTbl, keyv, maxDt=15, sKeyP=F) {
         setorderv(fTbl, keyv)
         fTbl[, sIDOuter := .GRP, by=eval(head(keyv, -1))]
         fTbl[, dtPrev := iDateTime - shift(iDateTime)]
@@ -430,8 +430,12 @@ addSessionRolling <- function(fTbl, keyv, maxDt=15) {
         fTbl[, NS := .N, sID]
         fTbl[, nS := rowid(sID)]
         updateDtPrev(fTbl)
+        if (sKeyP == T) {
+                fTbl[, sKey := toJSON(list(key=keyv, maxDt=maxDt))]
+        }
         fTbl
 }
+
 
 updateDtPrev <- function(fTbl) {
         fTbl[, dtPrev := iDateTime - c(iDateTime[1], head(iDateTime, -1))]
