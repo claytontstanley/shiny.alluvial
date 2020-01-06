@@ -9,8 +9,6 @@ library(magrittr)
 library(R.utils)
 library(Rcpp)
 
-.SAPATH = system.file(package="shiny.alluvial")
-
 #' @import data.table shiny testthat assertthat inline stringr stringi magrittr R.utils Rcpp
 NULL
 
@@ -35,13 +33,14 @@ NULL
 #'
 #' @export
 runAppSK <- function(zTbl, port=3343, ...) {
+	.SAPATH = system.file(package="shiny.alluvial")
 	reassignInPackage("runApp", "shiny", runAppMod)
 	.sessionTbl <<- copy(zTbl)
 	addResourcePath('shiny_alluvial', .SAPATH) 
 	shiny::runApp(.SAPATH, host="0.0.0.0", port=port, ...)
 }
 
-getSKChart <- function(tbl, exactTimeP=F) {
+getSKChart <- function(tbl, exactTimeP=F, width, height) {
 	ixs = tbl[, .I[moving == 'backward']]
 	resTbl = copy(tbl)
 	resTbl[, grep('^cID', colnames(resTbl), value=T) := NULL]
@@ -76,8 +75,8 @@ getSKChart <- function(tbl, exactTimeP=F) {
                      nodeWidth = 25,
                      nodePadding = 30,
                      layout = 32,
-                     width = 3840,
-                     height = 2160,
+                     width = width,
+                     height = height,
                      labelFormat = ".1%"
                      )
 	sankeyPlot
