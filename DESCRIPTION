@@ -25,8 +25,8 @@ Imports:
     devtools,
     inline,
     magrittr,
-	R.utils,
+    R.utils,
     Rcpp
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 LinkingTo: 
     Rcpp

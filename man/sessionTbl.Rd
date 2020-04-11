@@ -4,7 +4,9 @@
 \name{sessionTbl}
 \alias{sessionTbl}
 \title{Sample timestamped, sessionized dataset to visualize using the alluvial diagram}
-\format{An object of class \code{data.table} (inherits from \code{data.frame}) with 100000 rows and 8 columns.}
+\format{
+An object of class \code{data.table} (inherits from \code{data.frame}) with 100000 rows and 8 columns.
+}
 \usage{
 sessionTbl
 }
