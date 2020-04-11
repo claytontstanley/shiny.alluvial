@@ -25,6 +25,7 @@ Imports:
     devtools,
     inline,
     magrittr,
+	R.utils,
     Rcpp
 RoxygenNote: 6.1.1
 LinkingTo: 
