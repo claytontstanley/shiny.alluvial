@@ -22,7 +22,6 @@ Imports:
     assertthat,
     stringr,
     stringi,
-    devtools,
     inline,
     magrittr,
     R.utils,
