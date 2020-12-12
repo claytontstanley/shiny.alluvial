@@ -80,4 +80,9 @@ shinyServer(function(input, output, session) {
 			    print("Sending Results")
 			    session$sendCustomMessage(type='testmessage', message=sankeyPlot$params)
 		    })
+		    observeEvent(input$quitP, { 
+		            if (input$quitP == 'true') {
+				    stopApp()
+			    }
+                    })
 })

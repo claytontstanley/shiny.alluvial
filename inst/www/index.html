@@ -5,7 +5,7 @@
   <script src="shared/shiny.js" type="text/javascript"></script>
   <script src='shiny_alluvial/js/d3.v3.js' type='text/javascript'></script>
   <script src='shiny_alluvial/js/sankey.js' type='text/javascript'></script>
-  <link rel='stylesheet' href='shiny_alluvial/css/sankey.css'>
+    <link rel='stylesheet' href='shiny_alluvial/css/sankey.css'>
   <style>
   .rChart {
 	display: block;
@@ -17,11 +17,17 @@
 
 
 </head>
- 
-<body>
 
+<body onkeydown="keyCode(event)">
    <div id = 'rChartId' class = 'rChart shiny_alluvial' ></div>    
-
+   <script>
+	   function keyCode(event) {
+		   var x = event.keyCode;
+		   if (x == 27) {
+		   	   Shiny.setInputValue("quitP", "true")
+		   }
+	   }
+   </script>
 </body>
 
 <script>
