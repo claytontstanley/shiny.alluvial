@@ -132,7 +132,7 @@ var node = svg.append("g").selectAll(".node")
 		  .origin(function (d) { return d; })
 		  .on("dragstart", function () { this.parentNode.appendChild(this); })
 		  .on("drag", dragmove))
-   .on("click", handleNodeClick);
+  .on("mouseup", handleNodeClick);
 
 function UpdateQueryString(key, value, url) {
     if (!url) url = window.location.href;
