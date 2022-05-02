@@ -429,7 +429,7 @@ addSessionRolling <- function(fTbl, keyv, maxDt=15, sKeyP=F) {
         fTbl[, nS := rowid(sID)]
         updateDtPrev(fTbl)
         if (sKeyP == T) {
-                fTbl[, sKey := toJSON(list(key=keyv, maxDt=maxDt))]
+                fTbl[, sKey := jsonlite::toJSON(list(key=keyv, maxDt=maxDt))]
         }
         fTbl
 }
@@ -477,8 +477,8 @@ ensureSLabels <- function(zTbl) {
 grepForSessions <- function(zTbl, patt, invert=F, col='sUptoLabel') {
 #        print(sprintf('grepping for: %s, %s, %s', patt, invert, col))
         zTbl[, assert_that("sKey" %in% colnames(zTbl))]
-        key = fromJSON(zTbl[, sKey[1]])$key
-        maxDt = fromJSON(zTbl[, sKey[1]])$maxDt
+        key = jsonlite::fromJSON(zTbl[, sKey[1]])$key
+        maxDt = jsonlite::fromJSON(zTbl[, sKey[1]])$maxDt
         zTbl[, .SD
              ][grepl(patt, get(col)) != invert
              ][, addSessionRolling(copy(.SD), key, maxDt=maxDt)

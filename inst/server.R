@@ -32,7 +32,7 @@ shinyServer(function(input, output, session) {
                             if (sKeyKey != "") {
                                     key = eval(parse(text=sKeyKey))
                                     maxDt = eval(parse(text=sKeyMaxDt))
-                                    zTbl[, sKey := toJSON(list(key=key, maxDt=maxDt))]
+                                    zTbl[, sKey := jsonlite::toJSON(list(key=key, maxDt=maxDt))]
                                     addSessionRolling(zTbl, key, maxDt)
                                     zTbl[, sLabel := NULL]
                                     zTbl[, sUptoLabel := NULL]
